@@ -25,7 +25,7 @@ Stack Study has been developed using the following technologies:
     &nbsp;&nbsp; ```PUBLIC_VAPID_KEY = "Your generated public key"``` \
     &nbsp;&nbsp; ```PRIVATE_VAPID_KEY = "Your generated private key"``` \
     &nbsp;&nbsp; ```EMAIL = "Your email"``` \
-    &nbsp;&nbsp; ```mongodb_URI = "Your Mongo DB Atlas URI (you can also use your local DB with 'mongodb://localhost/StackStudy'``` \
+    &nbsp;&nbsp; ```mongodb_URI = "Your Mongo DB Atlas URI" (you can also use your local DB with 'mongodb://localhost/StackStudy')``` \
     <br/>
 If you don't currently have the first two parameters I suggest you checking the following repository: [https://github.com/saurabhdaware/pwainit-node-pushapi](https://github.com/saurabhdaware/pwainit-node-pushapi).
 5. (Optional) If you want to use the authomatic email sender (used to notify a user that his/her question has been answered) you have to access to ```routes/index.js``` and modify the ```transporter``` variable, giving a Gmail account (the one that will send the emails) and a [Gmail App Password](https://support.google.com/accounts/answer/185833?hl=en).
@@ -38,8 +38,8 @@ If you want to try out a user's experience in your cloned app, you can follow th
 1. Create an account in the register page, introducing a ```username```, a ```password``` and your ```email```.
 2. Ask a new question by pressing the <i> Fes una nova pregunta </i> in the main page. It will redirect you to a page where you can give your question a title, a body (where you can expand the information), a scope of study and a key concept (used both of them for the internal search engine). You also have the option of using the <img src="https://latex.codecogs.com/gif.latex?\LaTeX" /> software system (more information [here](https://www.latex-project.org/)), if you need to insert mathematical expressions.
 3. You can try to give youserlf an answer, accessing to your question page by searching it in the beginning of the main page (you can search your question title or even your key concept) or by filtering it in the bottom part of the main page. Once you are in, you can see the full question, other answers given (this part will obviously be empty right now) and a textarea where you can write your personal answer (where you can use <img src="https://latex.codecogs.com/gif.latex?\LaTeX" /> too).
-4. Once you have published your answer, if you access again to your question page, you will see the original question you asked and the answer you have just given.
-
+4. Once you have published your answer, if you access again to your question page, you will see the original question you asked and the answer you have just given. \
+<br/>
 <div align="center">
-  <img width="160" src="https://i.imgur.com/0NuLmy5.png"/>
+  <img width="230" src="https://i.imgur.com/0NuLmy5.png"/>
 </div>
