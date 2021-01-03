@@ -1,0 +1,386 @@
+<%- include ('partials/_header'); -%>
+
+<style>
+
+    body {
+        background-color: #188efc41;
+    }
+
+    .question-container {
+        margin: auto;
+        margin-top: 80px;
+        width: 1400px;
+        min-height: 110px;
+        background-color: white;
+        padding: 30px;
+        padding-left: 50px;
+        padding-right: 50px;
+        border-radius: 10px;
+        overflow-wrap: break-word;
+        overflow: auto;
+    }
+
+    .question-title {
+        margin-bottom: 23px;
+    }
+
+    .question-author {
+        color: rgb(70, 70, 70);
+        font-size: 18px;
+    }
+
+    .question-body {
+        font-size: 21px;
+        margin-bottom: 20px;
+    }
+
+    .answer {
+        margin: auto;
+        margin-top: 20px;
+        width: 1250px;
+        min-height: 80px;
+        background-color: rgb(238, 238, 238);
+        padding: 30px;
+        padding-left: 50px;
+        padding-right: 50px;
+        border-radius: 10px;
+        overflow-wrap: break-word;
+        overflow: auto;
+    }
+
+    .answer-text {
+        padding: 2px;
+        padding-top: 5px;
+        font-size: 21px;
+    }
+
+    .answer-question-container {
+        margin: auto;
+        margin-top: 20px;
+        margin-bottom: 100px;
+        width: 1298px;
+        background-color: white;
+        padding: 35px;
+        padding-top: 38px;
+        padding-bottom: 28px;
+        border: 4px solid #006cd1;
+        border-radius: 10px;
+        overflow-wrap: break-word;
+        overflow: auto;
+        font-size: 21px;
+    }
+
+    .answer-question-input {
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid rgb(150, 150, 150);
+        min-height: 600px;
+        max-height: 600px;
+    }
+
+    #submit-button {
+        border: 2px solid white;
+        border-radius: 18px;
+        background-color: #0063c0;
+        color: white;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 20px;
+        padding-right: 20px;
+        transition-duration: 0.2s;
+        font-size: 21px;
+        width: 200px;
+        margin: auto;
+        margin-top: 15px;
+    }
+
+    #submit-button:hover {
+        text-decoration: none;
+        background-color: white;
+        color: #188efcaf;
+        border: 2px solid #0063c0c0;
+        color: #01417e;
+    }
+
+    #latex-conversion {
+        font-size: 45px;
+        border: 1px solid rgb(150, 150, 150);
+        border-radius: 10px;
+        width: 1222px;
+        height: 300px;
+        padding: 10px;
+        font-size: 19px;
+    }
+
+    :root {
+        --color-green: #61EF43;
+        --color-red: #FF3C3C;
+        --color-button: #fdffff;
+    }
+    .switch-button {
+        display: inline-block;
+    }
+    .switch-button .switch-button__checkbox {
+        display: none;
+    }
+
+    .switch-button .switch-button__label {
+        background-color: var(--color-red);
+        width: 3.5rem;
+        height: 2rem;
+        border-radius: 3rem;
+        display: inline-block;
+        position: relative;
+    }
+
+    .switch-button .switch-button__label:before {
+        transition: .2s;
+        display: block;
+        position: absolute;
+        width: 2rem;
+        height: 2rem;
+        background-color: var(--color-button);
+        content: '';
+        border-radius: 50%;
+        box-shadow: inset 0px 0px 0px 1px var(--color-red);
+    }
+
+    .switch-button .switch-button__checkbox:checked + .switch-button__label {
+        background-color: var(--color-green);
+    }
+
+    .switch-button .switch-button__checkbox:checked + .switch-button__label:before {
+        transform: translateX(1.5rem);
+        box-shadow: inset 0px 0px 0px 1px var(--color-green);
+    }
+
+</style>
+
+<!-- Mobile -->
+<style>
+
+@media only screen and (max-width: 20cm) {
+    .question-container {
+        margin: auto;
+        margin-top: 3vh;
+        width: 95%;
+        min-height: 10px;
+        padding: 20px;
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .question-title {
+        margin-bottom: 15px;
+        font-size: 27px;
+    }
+
+    .question-author {
+        font-size: 15px;
+    }
+
+    .question-body {
+        font-size: 15px;
+        margin-bottom: 1vh;
+    }
+
+    .answer {
+        margin-top: 2vh;
+        width: 85vw;
+        min-height: 10px;
+        padding: 20px;
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    #answer-username {
+        font-size: 20px;
+    }
+
+    .answer-text {
+        font-size: 15px;
+    }
+
+    .answer-question-container {
+        margin-top: 2vh;
+        margin-bottom: 8vh;
+        width: 95%;
+        padding: 10px;
+        font-size: 15px;
+    }
+
+    .answer-question-input {
+        padding: 15px;
+        min-height: 60vh;
+        max-height: 60vh;
+        width: 87.5vw;
+    }
+
+    #question-footer-container {
+        justify-content: center !important;
+    }
+
+    #submit-button {
+        padding-top: 7px;
+        padding-bottom: 7px;
+        padding-left: 15px;
+        padding-right: 15px;
+        font-size: 15px;
+        width: 30vw;
+        margin-top: 1.5vh;
+    }
+
+    .switch-button {
+        display: none !important;
+    }
+}
+
+</style>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        jax: ["input/TeX", "output/HTML-CSS"],
+        extensions: ["tex2jax.js"],
+        "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] },
+        tex2jax: { inlineMath: [ ["$", "$"] ], displayMath: [ ["$$","$$"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno" },
+        TeX: { noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } } },
+        messageStyle: "none"
+    });
+</script>    
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js"></script>
+
+<body>
+    <div class="question-container">
+        <p class="question-author"> <i> Publicat per <%= username %> <% if (subject) { %> <span> | <%= subject %> </span> <% } %> <% if (keyConcept) { %> <span> | <%= keyConcept %> </span> <% } %> </i> </p>
+        <div class="question-title-container">
+            <h1 class="question-title" id="question-title"> <%= questionTitle %> </h1>
+        </div>
+        <div>
+            <p class="question-body" id="question-body"> <%= question %> </p>
+        </div>
+    </div>
+
+    <% for (let i = 0; i < answers.length; i++) { %>
+        <div class=answer>
+            <h3 id="answer-username"> <%= answerUsers[i] %> </h3> <!-- <%= latexOnOffAnswer[i] %> -->
+            <div class="answer-text"> <%= correctLatex(latexOnOffAnswer[i], answers[i]) %> </div>
+        </div>
+    <% } %>
+    
+    <form id="form" class="answer-question-container" action="/answer-question/<%= questionId %>" method="POST"> <!-- "/answer-question/<%= questionId %>" method="POST" -->
+        <textarea name="questionAnswer"
+            id="questionAnswer"
+            rows="15"                   
+            cols="117"
+            placeholder="Vols respondre aquesta pregunta?" 
+            onkeypress="latexCheck()"
+            class="answer-question-input"
+            required
+            oninvalid="this.setCustomValidity('Has d\'omplir aquest camp!')"                        
+            onchange="this.setCustomValidity('')"></textarea>
+        <input type="hidden" name="username" id="username"/>
+
+        <div id="question-footer-container" style="display: flex; justify-content: space-between">
+            <span class="switch-button" style="display: flex; align-items: center;">
+                <span style="padding-right: 10px; margin-bottom: 10px;"> $\LaTeX$ </span>
+                <input type="checkbox" name="latexOnOffAnswer" id="switch-label" class="switch-button__checkbox">
+                <label onclick="latexOnOff()" for="switch-label" class="switch-button__label"></label>
+            </span>
+            <span>
+                <button type="submit" 
+                    class="btn btn-primary btn-block" 
+                    id="submit-button">
+                    Envia
+                </button>
+            </span>
+        </div>
+    <form>
+
+    <script>
+        let username = localStorage.getItem('username');
+        document.getElementById('username').value = username;
+    </script>
+
+    <script>
+        // just use LaTeX in the question if the user has specified to
+        if (!'<%= latexOnOff %>') {
+            // we get the question title and body
+            let questionTitle = document.getElementById('question-title').textContent;
+            let questionBody = document.getElementById('question-body').textContent;
+
+            // we apppend the \ before $ (if it exists) so that LaTeX does not mess all the content up when it is not suposed to
+            let questionTitleModified = questionTitle.replace(/(\$)/g, '\\$1');
+            let questionBodyModified = questionBody.replace(/(\$)/g, '\\$1');
+
+            document.getElementById('question-title').textContent = questionTitleModified;
+            document.getElementById('question-body').textContent = questionBodyModified;
+        }
+    </script>
+
+    <script>
+        function latexOnOff() {
+            // we get if the user wants to use LaTeX or not
+            let latexOnOff = document.getElementById('switch-label').checked;
+
+            // true - false are inverted
+            if (latexOnOff == false) {
+                // resizing the textarea
+                document.getElementById('questionAnswer').style.minHeight = "300px";
+                document.getElementById('questionAnswer').style.maxHeight = "300px";
+
+                // inserting the LaTeX div
+                let latexConversion = document.createElement('div');
+                latexConversion.id = 'latex-conversion';
+                latexConversion.appendChild(document.createTextNode(''));
+                document.getElementById('form').insertBefore(latexConversion, document.getElementById('question-footer-container'));
+
+            } else {
+                // resizing the textarea
+                document.getElementById('questionAnswer').style.minHeight = "600px";
+                document.getElementById('questionAnswer').style.maxHeight = "600px";
+
+                // removing the LaTeX div
+                document.getElementById('latex-conversion').remove();
+            }
+        }
+
+        // inserting the LaTeX code inside the new div
+        function latexCheck() {
+            // we get the textarea
+            let textarea = document.getElementById('questionAnswer').value;
+
+            // just do something if the LaTeX div exists
+            if (document.getElementById('latex-conversion') != null) {
+                document.getElementById('latex-conversion').textContent = textarea;
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, "latex-conversion"]);
+            }
+        }
+    </script>
+
+    <!-- remove LaTeX in an answer if it shouldn't be applied -->
+    <% function correctLatex(latexOnOff, questionAnswer) { %>
+        <% if (latexOnOff == 'on') { %>
+            <% return (questionAnswer) %>
+        <% } else { %>
+            <% let answerModified = questionAnswer.replace(/(\$)/g, '\\$1'); %>
+            <% return (answerModified) %>
+        <% } %>
+    <% } %>
+
+</body>
+
+
+
+<!--
+    // first script
+            let latexScript = document.createElement('script');
+            latexScript.type = "text/x-mathjax-config";
+            latexScript.textContent = 'MathJax.Hub.Config({ jax: ["input/TeX", "output/HTML-CSS"], extensions: ["tex2jax.js"], "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }, tex2jax: { inlineMath: [ ["$", "$"] ], displayMath: [ ["$$","$$"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno" }, TeX: { noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } } }, messageStyle: "none" });';
+            document.head.appendChild(latexScript);
+
+            // second script
+            let latexScript2 = document.createElement('script');
+            latexScript2.type = "text/javascript";
+            latexScript2.src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js";
+            document.head.appendChild(latexScript2);
+-->

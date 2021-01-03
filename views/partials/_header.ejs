@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title> Stack Study </title>
+        <link rel="shortcut icon" href="https://i.imgur.com/Xs0B6V3.png">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+        <!-- Bootstrap -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    </head>
+
+    <!-- Customized CSS -->
+    <style>
+
+        #title {
+            margin-left: 100px;
+            width: 170px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        #nav-container {
+            width: 70%;
+            padding-right: 10vw;
+            font-size: 20px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        #session {
+            border: 2px solid white;
+            border-radius: 18px;
+            background-color: #0063c0;
+            color: white;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            padding-left: 20px;
+            padding-right: 20px;
+            transition-duration: 0.2s;
+            margin-left: 20px;
+        }
+
+        #session:hover {
+            text-decoration: none;
+            background-color: white;
+            color: #188efcaf;
+            border: 2px solid #0063c0c0;
+            color: #01417e;
+        }
+
+        /* Mobile */
+        @media only screen and (max-width: 20cm) {
+            #big-container {
+                width: 100vw;
+                display: flex;
+                justify-content: center;
+            }
+
+            #title {
+                margin-left: 0px;
+                width: 130px;
+                margin-bottom: 15px;
+            }
+
+            #nav-container {
+                width: 100%;
+                padding-right: 0vw;
+                font-size: 15px;
+            }
+
+            #session {
+                padding-left: 15px;
+                padding-right: 15px;
+                transition-duration: 0.2s;
+                margin-left: 10px;
+                margin-right: 10px;
+                text-align: center;
+            }
+        }
+
+    </style>
+
+    <body>
+        <nav id="big-container" class="navbar navbar-light mb-4 bg-white">
+            <a href="/" class="navbar-brand"> <img id="title" src="https://i.imgur.com/RjZOMts.jpg" /> </a>
+            <div id="nav-container">
+                <a href="/login" id="session"> Inicia sessió </a>
+                <a href="/register" id="session"> Crea un compte </a>
+                <a onclick="logOut()" id="session" href="/"> Tanca sessió </a>
+            </div>
+        </nav>
+
+    <script src="/socket.io/socket.io.js" charset="utf-8"></script>
+    
+    <script>
+    const socket = io();
+
+    // delay 
+    function delay(delay) {
+        var start = new Date().getTime();
+        while (new Date().getTime() < start + delay);
+    }
+
+    // Logging out of the app
+    function logOut() {
+        let username = localStorage.getItem('username');
+        socket.emit('user-log-out', username);
+        delay(100);
+    }
+    </script>

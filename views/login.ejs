@@ -1,0 +1,153 @@
+<%- include ('partials/_header'); -%>
+
+    <style>
+
+        body {
+            background-color: #188efc41;
+        }
+
+        #page-container {
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        #form-container {
+            margin-top: 15vh;
+            background-color: #ffffff;
+            border-radius: 20px;
+            border: 4px solid  #006cd1;
+            width: 600px;
+            height: 520px;
+            text-align: center;
+        }
+
+        #form-title {
+            padding-top: 50px;
+            padding-bottom: 10px;
+        }
+
+        .form-control {
+            padding: 20px;
+            border-radius: 10px;
+            width: 500px;
+            margin-left: 50px;
+            margin-top: 40px;
+            font-size: 17px;
+        }
+
+        #submit-button {
+            border: 2px solid white;
+            border-radius: 18px;
+            background-color: #0063c0;
+            color: white;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            padding-left: 20px;
+            padding-right: 20px;
+            transition-duration: 0.2s;
+            font-size: 18px;
+            width: 200px;
+            margin-left: 200px;
+            margin-top: 45px;
+        }
+
+        #submit-button:hover {
+            text-decoration: none;
+            background-color: white;
+            color: #188efcaf;
+            border: 2px solid #0063c0c0;
+            color: #01417e;
+        }
+
+        .invalid-credentials {
+            background-color: <%= backgroundColor %>;
+            color: red;
+            margin-top: 20px;
+            padding: 12px;
+            width: 200px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+    </style>
+    
+    <!-- Mobile -->
+    <style>
+
+        @media only screen and (max-width: 20cm) {
+            #form-container {
+                margin-top: 3vh;
+                width: 90vw;
+                height: 55vh;
+                min-height: 300px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            #form-title {
+                font-size: 30px;
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+
+            .form-control {
+                padding: 15px;
+                width: 78vw;
+                margin-left: 0vw;
+                margin-top: 4vh;
+                font-size: 15px;
+            }
+
+            #submit-button {
+                padding-top: 7px;
+                padding-bottom: 7px;
+                font-size: 15px;
+                width: 150px;
+                margin-top: 4vh;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        
+    </style>
+
+    <div id="page-container">
+        <div id="form-container">
+            <div>
+                <h1 id="form-title"> Inicia Sessió </h1>
+                <form id="form" action="/login/data" method="POST"> 
+                    <div class="form-group">
+                        <input type="text" name="username" placeholder="Nom d'usauri" class="form-control" id="username"> 
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="mail" placeholder="Correu electrònic" class="form-control" id="email"> 
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="password" placeholder="Contrasenya" class="form-control" id="password"> 
+                    </div>
+                    <button onclick="saveUsername()" type="submit" class="btn btn-primary btn-block" id="submit-button">
+                        Envia
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="invalid-credentials"> <%= invalidCredentials %> </div>
+        <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+    </div>
+
+    <script>
+    // we save the username value so that then, when the user logs out, we can access to it
+    // we can also use it when we need to check wether the user has permisson to do some actions or not
+        function saveUsername() {
+            localStorage.setItem('username', document.getElementById('username').value);
+        }
+    </script>
+
+    
+    
+

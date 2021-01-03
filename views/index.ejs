@@ -1,0 +1,572 @@
+<head>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0099ff" />
+</head>
+
+<%- include ('partials/_header'); -%>
+    
+    <!-- Customized CSS (main page) -->
+    <style>
+        #introduction {
+            margin-top: -25px;
+            background-color: #257fd4;
+            background-image: url('https://i.imgur.com/0omXLbC.png');
+            background-repeat: no-repeat;
+            background-position: center;
+            color: white;
+            height: 500px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .first-subtitle {
+            width: 900px;
+            padding-top: 30px;
+            text-align: center;
+            font-size: 23px;
+        }
+
+        #page-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+        }
+
+        #searcher-container {
+            margin-top: 80px;
+            margin-bottom: 30px;
+            width: 50%;
+            display: flex;
+            align-items: center;
+        }
+
+        #question-searcher {
+            padding-top: 10px;
+            padding-bottom: 10px;
+            padding-left: 20px;
+            width: 100%;
+            font-size: 18px;
+            border-radius: 10px;
+            border: 2px solid rgb(73, 73, 73);
+        }
+
+        #question-searcher-button {
+            border: 2px solid white;
+            border-radius: 20px;
+            background-color: #0063c0;
+            color: white;
+            font-size: 15px;
+            padding-top: 16px;
+            padding-bottom: 12px;
+            padding-left: 16px;
+            padding-right: 18px;
+            margin-left: 10px;
+            transition-duration: 0.2s;
+        }
+
+        #question-searcher-button:hover {
+            background-color: white;
+            color:  #002649;
+            border: 2px solid #002649ea;
+        }
+        
+        #make-question {
+            border: 2px solid white;
+            border-radius: 20px;
+            background-color: #002649ea;
+            color: white;
+            margin-top: 10px;
+            font-size: 20px;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            padding-left: 30px;
+            padding-right: 30px;
+            transition-duration: 0.2s;
+        }
+
+        #make-question:hover {
+            background-color: white;
+            color:  #002649;
+            border: 2px solid #002649ea;
+        }
+
+        #answer-questions-container {
+            margin-top: 80px;
+            background-color: #188efc41;
+            color: rgba(0, 0, 0, 0.822);
+            min-height: 100px;
+            display: flex;
+            text-align: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        #answer-questions-title {
+            margin-top: 60px;
+        }
+
+        .questions-filter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: auto;
+            background-color: white;
+            margin-top: 30px;
+            width: 1000px;
+            height: 80px;
+            border-radius: 10px;
+            padding: 30px;
+        }
+
+        .filter-button {
+            border: 2px solid rgba(0, 0, 0, 0);
+            border-radius: 10px;
+            background-color: #0063c0;
+            color: white;
+            font-size: 18px;
+            padding-top: 10px;
+            padding-bottom: 9px;
+            padding-left: 30px;
+            padding-right: 30px;
+            transition-duration: 0.2s;
+        }
+
+        .filter-button:hover {
+            background-color: white;
+            color: #188efcaf;
+            border: 2px solid #002649;
+            color: #01417e;
+        }
+
+        #question-subject {
+            font-size: 18px;
+            border-radius: 10px;
+            border: 2px solid rgb(73, 73, 73);
+            padding: 10px;
+            width: 300px;
+            margin-right: 7px;
+        }
+
+        #question-with-without-answer {
+            font-size: 18px;
+            border-radius: 10px;
+            border: 2px solid rgb(73, 73, 73);
+            padding: 10px;
+            width: 300px;
+            margin-right: 7px;
+        }
+
+        .key-concept {
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px solid rgb(73, 73, 73);
+            width: 350px;
+            font-size: 18px;
+            margin-right: 7px;
+        }
+
+        .sample-questions-container {
+            display: flex;
+            text-align: left;
+            flex-direction: column;
+            margin: auto;
+            background-color: white;
+            margin-top: 10px;
+            margin-bottom: 50px;
+            width: 1000px;
+            min-height: 65px;
+            border-radius: 10px;
+            padding: 30px;
+        }
+
+        .question-label {
+            font-size: 30px;
+            padding-left: 20px;
+            padding-top: 7px;
+            padding-bottom: 7px;
+            border-radius: 10px;
+        }
+
+        .question-label:hover {
+            text-decoration: none;
+            background-color: rgb(230, 230, 230);
+        }
+
+        .question-title:hover, .sample-questions, .sample-questions:hover {
+            text-decoration: none; 
+            color: black;
+        }
+
+        .no-matches-found {
+            font-size: 23px;
+            text-align: center;
+            color: #002649ea;
+        }
+
+        .pass-page {
+            text-align: center;
+            padding-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .page-button {
+            border: 2px solid rgba(0, 0, 0, 0);
+            border-radius: 10px;
+            background-color: #0063c0;
+            color: white;
+            font-size: 18px;
+            padding-top: 10px;
+            padding-bottom: 9px;
+            padding-left: 17px;
+            padding-right: 17px;
+            transition-duration: 0.2s;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+
+        .page-button:hover {
+            background-color: white;
+            color: #188efcaf;
+            border: 2px solid #002649;
+            color: #01417e;
+        }
+
+    </style>
+
+    <!-- Mobile -->
+    <style>
+
+        @media only screen and (max-width: 20cm) {
+            #introduction {
+                margin-top: -10px;
+                height: 37vh;
+            }
+
+            #introduction-title {
+                font-size: 27px;
+            }
+
+            .first-subtitle {
+                width: 85vw;
+                font-size: 15px;
+            }
+
+            #page-container {
+                font-size: 15px;
+            }
+
+            #searcher-container {
+                margin-top: 5vh;
+                margin-bottom: 2vh;
+                width: 80%;
+            }
+
+            #question-searcher {
+                padding-top: 7px;
+                padding-bottom: 7px;
+                padding-left: 15px;
+                font-size: 15px;
+            }
+
+            #question-searcher-button {
+                padding-top: 12px;
+                padding-bottom: 9px;
+                padding-left: 13px;
+                padding-right: 15px;
+            }
+            
+            #make-question {
+                margin-top: 0.7vh;
+                font-size: 15px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            #answer-questions-container {
+                margin-top: 6vh;
+                min-height: 2vh;
+            }
+
+            #answer-questions-title {
+                margin-top: 6vh;
+                font-size: 27px;
+            }
+
+            .questions-filter {
+                margin-top: 3vh;
+                margin-bottom: 3vh;
+                width: 95%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 39vh;
+                padding: 0px;
+            }
+
+            .filter-button {
+                font-size: 15px;
+                padding-top: 7px;
+                padding-bottom: 7px;
+                padding-left: 30px;
+                padding-right: 30px;
+                margin-top: 15px;
+            }
+
+            #question-subject {
+                font-size: 15px;
+                padding: 7px;
+                width: 90%;
+                margin-top: 15px;
+                margin-right: 0;
+            }
+
+            #question-with-without-answer {
+                font-size: 15px;
+                padding: 7px;
+                width: 90%;
+                margin-top: 15px;
+                margin-right: 0;
+            }
+
+            .key-concept {
+                padding: 7px;
+                width: 90%;
+                font-size: 15px;
+                margin-right: 0;
+            }
+
+            .sample-questions-container {
+                margin-top: 0px;
+                margin-bottom: 50px;
+                width: 90%;
+                border-radius: 10px;
+                padding: 20px;
+            }
+
+            #question-label-title {
+                font-size: 27px;
+            }
+
+            /* ja està */
+            .no-matches-found {
+                font-size: 17px;
+            }
+
+            .page-button {
+                font-size: 15px;
+                padding-top: 8px;
+                padding-bottom: 7px;
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+        }
+
+    </style>
+
+    <script src="/socket.io/socket.io.js" charset="utf-8"></script>
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax: ["input/TeX", "output/HTML-CSS"],
+            extensions: ["tex2jax.js"],
+            "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] },
+            tex2jax: { inlineMath: [ ["$", "$"] ], displayMath: [ ["$$","$$"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno" },
+            TeX: { noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } } },
+            messageStyle: "none"
+        });
+    </script>    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js"></script>
+
+    <div id="introduction">
+        <h1 id="introduction-title"> Soluciona els teus dubtes </h1>
+        <p class="first-subtitle"> <i> En aquest espai podràs solucionar tots els teus dubtes sobre qualsevol dels teus àmbits d'estudi, consultant preguntes ja fetes o bé formulant-ne noves de pròpies. </i> </p>
+    </div>
+
+    <div id="page-container">
+        <!-- Questions -->
+        <form id="searcher-container" action="/question" method="POST">
+            <input type="text" placeholder="Cerca una pregunta" id="question-searcher" name="questionSearch">
+            <button type="submit" id="question-searcher-button"> <i style='font-size:24px' class='fas'>&#xf124;</i> </button> 
+        </form>
+        <p> o bé </p>
+        <button id="make-question" onclick="checkAuth()"> Fes una nova pregunta </button>
+    </div>
+
+    <div id="answer-questions-container">
+        <div> 
+            <h1 id="answer-questions-title"> ... o soluciona els d'altres. </h1>
+            <p class="first-subtitle"> <i> Ets un expert en algun àmbit d'estudi? Ajuda a altres a solucionar els seus dubtes! </i> </p>
+        </div>
+
+        <form class="questions-filter" action="/filter-question" method="POST">
+            <input type="text" name="keyConcept" class="key-concept" placeholder="Concepte clau">
+            <select name="subject" id="question-subject">
+                <option value="" disabled selected>Selecciona l'àmbit d'estudi</option>
+                <option value="Arts">Arts</option>
+                <option value="Ciències físiques">Ciències físiques</option>
+                <option value="Ciències naturals">Ciències naturals</option>
+                <option value="Ciències socials i jurídiques">Ciències socials i jurídiques</option>
+                <option value="Enginyeria i Arquitectura">Enginyeria i Arquitectura</option>
+                <option value="Filologia i humanitats">Filologia i humanitats</option>
+                <option value="Matemàtiques">Matemàtiques</option>
+            </select>
+            <select name="questionWithWithoutAnswer" id="question-with-without-answer" required>
+                <option value="without">Preguntes sense resposta</option>
+                <option value="with" selected>Totes les preguntes</option>
+            </select>
+            <button type="submit" class="filter-button"> Filtra </button>
+        </form>
+
+        <div class="sample-questions-container">
+            <% for (let i = 0; i < questionTitle.length; i++) { %>
+                <div class="question-label"> <a class="sample-questions" href="/question/<%= questionId[i] %>"> <h2 id="question-label-title"> <%= questionTitle[i] %> <h2> </a> </div>
+            <% } %>
+            <% if (questionTitle.length == 0) { %>
+                <div class="no-matches-found"> <i> No s'ha trobat cap resultat </i> </div>
+            <% } %>
+
+            <% if (arrowsNeeded == true) { %>
+                <div class="pass-page">
+                    <form action="/pass-page-index" method="POST">
+                        <input type="hidden" name="questionItem" value="<%= questionTitle[0] %>" />
+                        <input type="hidden" name="arrowStatus" value="left" />
+                        <button type="submit" class="page-button"> <i class='fas fa-angle-double-left'></i> </button>
+                    </form>
+                    <form action="/pass-page-index" method="POST">
+                        <input type="hidden" name="questionItem" value="<%= questionTitle[questionTitle.length - 1] %>" />
+                        <input type="hidden" name="arrowStatus" value="right" />
+                        <button type="submit" class="page-button"> <i class='fas fa-angle-double-right'></i> </button>
+                    </form>
+                <div>
+            <% } %>
+        <div>
+    </div>
+
+    <script>
+        // delay 
+        function delay(delay) {
+            var start = new Date().getTime();
+            while (new Date().getTime() < start + delay);
+        }
+
+        // send username to the server so that it can check if the user is allowed to make a question
+        function checkAuth() {
+            let username = localStorage.getItem('username');
+
+            socket.emit('user-check-auth', username);
+            delay(100);
+        }
+
+        // the server answers giving / not giving permssion
+        socket.on('question-redirection', (route) => {
+            window.location.href = route;
+        });
+
+    </script>
+    <script>
+
+        // ServiceWorker Registration
+        if('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('sw.js').then(function(registration) {
+                    // Registration was successful
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    
+                    // Push API read subscription
+                    registration.pushManager.getSubscription().then(function(sub) {
+                        if (sub === null) {
+                            // Update UI to ask user to register for Push
+                            console.log('Not subscribed to push service!');
+                        } else {
+                            // We have a subscription, update the database
+                            console.log('Subscription object: ', sub);
+                            storeSubscription(sub);
+                        }
+                    });
+                    
+                }, function(err) {
+                    // registration failed :(
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+        
+    // PUSH API Subscription
+    
+        const publicVapidKey = "BC6yXokdghI0dnXSPhNZKKmD8R21g5feD9plJwrWor2ewIISNf5-h6lovJzwW9LHpucRs41vFth2TbuekgJUgwE";  // Checkout my github repository https://github.com/saurabhdaware/pwainit-node-pushapi for the backend setup code and generation of the vapid id.
+    
+        function storeSubscription(sub){
+            // Call your subscription API here. If you are using https://github.com/saurabhdaware/pwainit-node-pushapi then you can keep the code same here.
+            fetch('http://localhost:3000/subscribe',{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify(sub)
+            })
+            .then(res => res.json())
+            .then(res => console.log(res))
+            .catch(err => console.warn("Make sure you are running the pushapi-backend code... cd pushapi-backend and run node index.js"));
+        }
+    
+        // Helper function to convert Base 64
+        function urlB64ToUint8Array(base64String) {
+            try{
+                const padding = '='.repeat((4 - base64String.length % 4) % 4);
+                const base64 = (base64String + padding)
+                    .replace(/-/g, '+')
+                    .replace(/_/g, '/');
+                        const rawData = window.atob(base64);
+                        return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
+            }catch(err){
+                alert("Please add Vapid to publicVapidKey variable. Open console for more information");
+                console.error("You have not set publicVapidKey. Open index.html and look for the line which defines publicVapidKey variable and paste your public vapid key in the value");
+                console.log("If you dont have public vapid key yet checkout https://github.com/saurabhdaware/pwainit-node-pushapi for backend setup and generation of vapid keys");
+                return err;
+            }
+        }
+    
+        // Subscribe user for push service, This returns us subscription object which can be used to send notifications from backend
+    
+        const applicationServerKey = urlB64ToUint8Array(publicVapidKey);
+    
+        function subscribeUser() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.ready.then(function(reg) {
+                    reg.pushManager.subscribe({userVisibleOnly: true,applicationServerKey:applicationServerKey})
+                        .then(function(sub) {
+                            console.log(sub);
+                            console.log('Endpoint URL: ', sub.endpoint);
+                            console.log("post this data to your server and store in database, then use the endpoint to push notifications from server")
+                            
+                            // Pass sub to Server and store it. You will be using it to push notifications from your server
+                            storeSubscription(sub);
+    
+                        }).catch(function(e) {
+                            if (Notification.permission === 'denied') {
+                                alert("Notification permission was denied. Please click lock icon beside url bar and allow notifications");
+                                console.warn('Permission for notifications was denied');
+                            } else {
+                                console.warn("Please make sure you change publicVapidKey variable with your public vapid key generated from your backend");
+                                console.log("Checkout https://github.com/saurabhdaware/pwainit-node-pushapi for example code and generation of the public vapid key");
+                                console.error('Unable to subscribe to push', e);
+                            }
+                        });
+                }).catch(e => {
+                    console.warn("Please make sure you change publicVapidKey variable with your public vapid key generated from your backend");
+                    console.log("Checkout https://github.com/saurabhdaware/pwainit-node-pushapi for example code and generation of the public vapid key");
+                    console.error('Unable to subscribe to push', e);
+                })
+            }
+        }
+    </script>
+    

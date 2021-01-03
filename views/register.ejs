@@ -1,0 +1,194 @@
+<%- include ('partials/_header'); -%>
+
+    <style>
+
+        body {
+            background-color: #188efc41;
+        }
+
+        #page-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        #form-container {
+            margin-top: 15vh;
+            background-color: #ffffff;
+            border-radius: 20px;
+            border: 4px solid  #006cd1;
+            width: 600px;
+            height: 590px;
+            text-align: center;
+            flex-direction: column;
+        }
+
+        #form-title {
+            padding-top: 50px;
+            padding-bottom: 10px;
+        }
+
+        .form-control {
+            padding: 20px;
+            border-radius: 10px;
+            width: 500px;
+            margin-left: 50px;
+            margin-top: 40px;
+            font-size: 17px;
+        }
+
+        #submit-button {
+            border: 2px solid white;
+            border-radius: 18px;
+            background-color: #0063c0;
+            color: white;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            padding-left: 20px;
+            padding-right: 20px;
+            transition-duration: 0.2s;
+            font-size: 18px;
+            width: 200px;
+            margin-left: 200px;
+            margin-top: 45px;
+        }
+
+        #submit-button:hover {
+            text-decoration: none;
+            background-color: white;
+            color: #188efcaf;
+            border: 2px solid #0063c0c0;
+            color: #01417e;
+        }
+
+        a:link {
+            text-decoration: none;
+        }
+
+        .register-link {
+            color: #0063c0;
+            font-size: 20px;
+            margin-top: 35px;
+            margin-bottom: 70px;
+        }
+
+    </style>
+
+    <!-- Mobile -->
+    <style>
+        @media only screen and (max-width: 20cm) {
+            #form-container {
+                margin-top: 3vh;
+                width: 90vw;
+                height: 62vh;
+                min-height: 360px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            #form-title {
+                font-size: 30px;
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+
+            .form-control {
+                padding: 15px;
+                width: 78vw;
+                margin-left: 0vw;
+                margin-top: 4vh;
+                font-size: 15px;
+            }
+
+            #submit-button {
+                padding-top: 7px;
+                padding-bottom: 7px;
+                font-size: 15px;
+                width: 150px;
+                margin-top: 4vh;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .register-link {
+                font-size: 17px;
+                margin-top: 35px;
+            }
+        }
+    </style>
+
+    <script>
+        function check_pass() {
+            if (document.getElementById('password').value ==
+                document.getElementById('verify-password').value) {
+                document.getElementById('submit-button').disabled = false;
+            } else {
+                document.getElementById('submit-button').disabled = true;
+            }
+        }
+    </script>
+
+    <div id="page-container">
+        <div id="form-container">
+            <div>
+                <h1 id="form-title"> Registra't </h1>
+                <form id="form" action="/register/data" method="POST"> 
+                    <div class="form-group">
+                        <input type="text" 
+                        name="username" 
+                        placeholder="Nom d'usuari" 
+                        class="form-control" 
+                        id="username" 
+                        required pattern = "(?=.*).{5,}"
+                        oninvalid="this.setCustomValidity('El nom d\'usuari ha de contenir un mínim de 5 caràcters')"
+                        onchange="this.setCustomValidity('')"> 
+                    </div>
+                    <div class="form-group">
+                        <input type="email" 
+                        name="mail" 
+                        placeholder="Correu electrònic" 
+                        class="form-control" 
+                        id="register-input" 
+                        required pattern="(?=.*[a-z]).{1,}"
+                        oninvalid="this.setCustomValidity('Insereix una direcció correcta')"
+                        onchange="this.setCustomValidity('')"> 
+                    </div>
+                    <div class="form-group">
+                        <input type="password" 
+                        name="password" 
+                        placeholder="Contrasenya" 
+                        class="form-control" 
+                        id="password" 
+                        required pattern="(?=.*\d)(?=.*).{8,}"
+                        oninvalid="this.setCustomValidity('La contrassenya ha de contenir un mínim de 8 caràcters i ha d\'estar composta per nombres i lletres')"
+                        onchange="this.setCustomValidity(''); check_pass();"> 
+                    </div>
+                    <div class="form-group">
+                        <input type="password" 
+                        name="verifyPassword" 
+                        placeholder="Confirma contrasenya" 
+                        class="form-control" 
+                        id="verify-password" 
+                        required pattern="(?=.*\d)(?=.*).{8,}"
+                        oninvalid="this.setCustomValidity('poya')"
+                        onchange="this.setCustomValidity(''); check_pass();"> 
+                    </div>
+                    <button type="submit" 
+                        class="btn btn-primary btn-block" 
+                        id="submit-button"
+                        onclick="setUsername()">
+                        Envia
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="register-link"> <a href="/login"> Inicia sessió si ja t'has registrat </a> </div>
+    </div>
+
+    <script>
+        function setUsername() {
+            localStorage.setItem('username', document.getElementById('username').value);
+        }
+    </script>
