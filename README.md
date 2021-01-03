@@ -21,12 +21,12 @@ Stack Study has been developed using the following technologies:
 2. Install [Node.js](https://nodejs.org/en/) and [Mongo DB](https://www.mongodb.com/2).
 3. Access the new file and execute ```npm install```.
 4. Create a ```.env``` file in the root directory and fill it with the following data:
-    
-    PUBLIC_VAPID_KEY = "Your generated public key"
-    PRIVATE_VAPID_KEY = "Your generated private key"
-    EMAIL = "Your email"
-    mongodb_URI = "Your Mongo DB Atlas URI (you can also use your local DB with ```'mongodb://localhost/StackStudy'```
-    
+    <br/>
+    PUBLIC_VAPID_KEY = "Your generated public key" \
+    PRIVATE_VAPID_KEY = "Your generated private key" \
+    EMAIL = "Your email" \
+    mongodb_URI = "Your Mongo DB Atlas URI (you can also use your local DB with ```'mongodb://localhost/StackStudy'``` \
+    <br/>
 If you don't currently have the first two parameters I suggest you checking the following repository: [https://github.com/saurabhdaware/pwainit-node-pushapi](https://github.com/saurabhdaware/pwainit-node-pushapi).
 5. (Optional) If you want to use the authomatic email sender (used to notify a user that his/her question has been answered) you have to access to ```routes/index.js``` and modify the ```transporter``` variable, giving a Gmail account (the one that will send the emails) and a [Gmail App Password](https://support.google.com/accounts/answer/185833?hl=en).
 6. Access to ```public/index.html``` and modify the ```publicVapidKey``` constant (line 41), giving the value generated in pass 4.
