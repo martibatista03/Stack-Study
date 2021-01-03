@@ -43,3 +43,8 @@ If you want to try out a user's experience in your cloned app, you can follow th
 <div align="center">
   <img width="230" src="https://i.imgur.com/0NuLmy5.png"/>
 </div>
+
+## Author
+Copyright © 2021 Martí Batista Obiols
+You can contant the author of this project via the following email address: [martibatista03@gmail.com](mailto:martibatista03@gmail.com).
+
