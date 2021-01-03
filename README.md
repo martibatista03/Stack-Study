@@ -2,7 +2,7 @@
 Stack Study is a web application where students from all areas can ask questions about any of their fields, and even  give an answer to other's people questions, if they have enough knowledge to do so. Stack Study is a Progressive Web Application (PWA) that can be found through the following link [https://stack-study.herokuapp.com](https://stack-study.herokuapp.com) or scanning this QR code:
 
 <div align="center">
-  <img width="160" src="https://i.imgur.com/lRGKzNL.png"/>
+  <img width="200" src="https://i.imgur.com/lRGKzNL.png"/>
 </div>
 
 It can also be found in the Google Play Store: [https://play.google.com/store/apps/details?id=com.herokuapp.stack_study.twa](https://play.google.com/store/apps/details?id=com.herokuapp.stack_study.twa).
@@ -38,7 +38,7 @@ If you want to try out a user's experience in your cloned app, you can follow th
 1. Create an account in the register page, introducing a ```username```, a ```password``` and your ```email```.
 2. Ask a new question by pressing the <i> Fes una nova pregunta </i> in the main page. It will redirect you to a page where you can give your question a title, a body (where you can expand the information), a scope of study and a key concept (used both of them for the internal search engine). You also have the option of using the <img src="https://latex.codecogs.com/gif.latex?\LaTeX" /> software system (more information [here](https://www.latex-project.org/)), if you need to insert mathematical expressions.
 3. You can try to give youserlf an answer, accessing to your question page by searching it in the beginning of the main page (you can search your question title or even your key concept) or by filtering it in the bottom part of the main page. Once you are in, you can see the full question, other answers given (this part will obviously be empty right now) and a textarea where you can write your personal answer (where you can use <img src="https://latex.codecogs.com/gif.latex?\LaTeX" /> too).
-4. Once you have published your answer, if you access again to your question page, you will see the original question you asked and the answer you have just given. \
+4. Once you have published your answer, if you access again to your question page, you will see the original question you asked and the answer you have just given. 
 <br/>
 <div align="center">
   <img width="230" src="https://i.imgur.com/0NuLmy5.png"/>
