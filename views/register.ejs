@@ -73,6 +73,15 @@
             margin-bottom: 70px;
         }
 
+        .invalid-credentials {
+            background-color: <%= backgroundColor %>;
+            color: red;
+            margin-top: 20px;
+            padding: 12px;
+            width: 55vw;
+            border-radius: 10px;
+        }
+
     </style>
 
     <!-- Mobile -->
@@ -82,7 +91,7 @@
                 margin-top: 3vh;
                 width: 90vw;
                 height: 62vh;
-                min-height: 360px;
+                min-height: 480px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -172,10 +181,10 @@
                         class="form-control" 
                         id="verify-password" 
                         required pattern="(?=.*\d)(?=.*).{8,}"
-                        oninvalid="this.setCustomValidity('poya')"
+                        oninvalid="this.setCustomValidity('Les contrassenyes han de coincidir.')"
                         onchange="this.setCustomValidity(''); check_pass();"> 
                     </div>
-                    <button type="submit" 
+                    <button type="submit"
                         class="btn btn-primary btn-block" 
                         id="submit-button"
                         onclick="setUsername()">
@@ -183,6 +192,7 @@
                     </button>
                 </form>
             </div>
+            <div class="invalid-credentials"> <%= usedUsername %> </div>
         </div>
         <div class="register-link"> <a href="/login"> Inicia sessió si ja t'has registrat </a> </div>
     </div>
