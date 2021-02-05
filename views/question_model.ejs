@@ -39,7 +39,7 @@
         margin-top: 20px;
         width: 1250px;
         min-height: 80px;
-        background-color: rgb(238, 238, 238);
+        background-color: rgb(242, 242, 242);
         padding: 30px;
         padding-left: 50px;
         padding-right: 50px;
@@ -48,10 +48,56 @@
         overflow: auto;
     }
 
+    .answer-username {
+        font-size: 27px;
+        font-weight: 500;
+    }
+
+    .total-user-upvotes {
+        font-size: 17px;
+        float: right;
+        margin-top: 10px;
+        margin-right: 15px;
+        color: rgb(73, 73, 73);
+    }
+
+    #total-upvotes-icon {
+        float: right;
+        font-size: 17px;
+        margin-top: 13px;
+    }
+
+    .total-upvotes-count {
+        float: right;
+        font-size: 17px;
+        margin-top: 10px;
+        font-weight: 700;
+    }
+
+    .answering-study-scope {
+        font-size: 17px;
+        color: rgb(73, 73, 73);
+        margin-top: 15px;
+        margin-bottom: 5px;
+    }
+
     .answer-text {
         padding: 2px;
         padding-top: 5px;
         font-size: 21px;
+    }
+
+    .upvote-container {
+        margin-top: 20px;
+        float: right;
+    }
+
+    .upvote-button {
+        border: 0;
+        font-size: 30px;
+        color: rgba(0, 0, 0, 0.5);
+        background-color: rgba(255, 255, 255, 0);
+        transition-duration: 0.2s;
     }
 
     .answer-question-container {
@@ -193,12 +239,47 @@
         padding-right: 30px;
     }
 
-    #answer-username {
+    .answer-username {
+        display: block;
         font-size: 20px;
+    }
+
+    .total-upvotes-container {
+        float: left;
+    }
+
+    .total-user-upvotes {
+        font-size: 14px;
+        margin-top: 5px;
+        margin-right: 15px;
+    }
+
+    #total-upvotes-icon {
+        font-size: 15px;
+        margin-top: 7px;
+    }
+
+    .total-upvotes-count {
+        font-size: 14px;
+        margin-top: 5px;
+    }
+
+    .answering-study-scope {
+        margin-top: 30px;
+        font-size: 14px;
+        clear: both;
     }
 
     .answer-text {
         font-size: 15px;
+    }
+
+    .upvote-container {
+        margin-top: 15px;
+    }
+
+    .upvote-button {
+        font-size: 23px;
     }
 
     .answer-question-container {
@@ -261,9 +342,37 @@
     </div>
 
     <% for (let i = 0; i < answers.length; i++) { %>
+        
         <div class=answer>
-            <h3 id="answer-username"> <%= answerUsers[i] %> </h3> <!-- <%= latexOnOffAnswer[i] %> -->
-            <div class="answer-text"> <%= correctLatex(latexOnOffAnswer[i], answers[i]) %> </div>
+            <span class="answer-username" id="answer-username<%= i %>"><%= answerUsers[i][0] %></span> 
+            <span class="total-upvotes-container">
+                <span class="total-upvotes-count" id="total-upvotes-count<%= i %>">
+                    <% if (upvotes) { %>
+                        <%= upvotes[i] %>
+                    <% } %>
+                </span> 
+                <span id="total-upvotes-icon" class="fas fa-thumbs-up">
+                    &nbsp; 
+                </span> 
+                <span class="total-user-upvotes"> 
+                    Reputació: 
+                </span>
+            </span>
+            <div class="answering-study-scope">
+                <% if (answerUsers[i][1]) { %>
+                    <span> <i> Format/da en <%= answerUsers[i][1] %> </i> </span>
+                <% } %>
+                <% if (answerUsers[i][2]) { %>
+                    <span> <i> | Especialitzat/da en <%= answerUsers[i][2] %> </i> </span>
+                <% } %>
+            </div>
+            <hr style=" border-top: 1px solid rgb(100, 100, 100);">
+            <div class="answer-text">
+                <%= correctLatex(latexOnOffAnswer[i], answers[i]) %> 
+            </div>
+            <div class="upvote-container">
+                <span> <button onclick="upvote('<%= i %>')" id="upvote-button<%= i %>" class="upvote-button"> <i class="fas fa-thumbs-up"></i> </button> </span>
+            </div>
         </div>
     <% } %>
     
@@ -278,6 +387,7 @@
             required
             oninvalid="this.setCustomValidity('Has d\'omplir aquest camp!')"                        
             onchange="this.setCustomValidity('')"></textarea>
+        <input type="hidden" name="userIdAnswer" id="userIdAnswer"/>
         <input type="hidden" name="username" id="username"/>
 
         <div id="question-footer-container" style="display: flex; justify-content: space-between">
@@ -297,7 +407,14 @@
     <form>
 
     <script>
+        // add userId for the authentication process
+        let userIdAnswer = localStorage.getItem('userId');
+        console.log(userIdAnswer);
+        document.getElementById('userIdAnswer').value = userIdAnswer;
+
+        // add username because we need it to search for his/her studyScope and Speciality
         let username = localStorage.getItem('username');
+        console.log(username);
         document.getElementById('username').value = username;
     </script>
 
@@ -357,6 +474,89 @@
         }
     </script>
 
+        <!-- match as already upvoted questions the ones that the user has already upvoted -->
+        <% if (matchedAnswers) { %>
+            <% for (let i = 0; i < matchedAnswers.length; i++) { %>
+                <script> var upvoteButton = document.getElementById('upvote-button<%= matchedAnswers[i] %>'); </script>
+                <script> upvoteButton.style.color = 'rgba(0, 40, 230, 0.8)'; </script>
+            <% } %>
+        <% } %>
+
+    <script>
+        // a user presses the upvote button
+        function upvote(i) {
+            var upvoteButton = document.getElementById(`upvote-button${i}`);
+
+            // if the button wasn't pressed
+            if (upvoteButton.style.color != 'rgba(0, 40, 230, 0.8)') {
+                // changing the upvote button color
+                upvoteButton.style.color = 'rgba(0, 40, 230, 0.8)';
+
+                // adding the value in the DOM
+                for (let w = 0; w < '<%= answers.length %>'; w++) {
+                    // user in particular upvoted answer
+                    let answeringUser = document.getElementById(`answer-username${i}`).textContent;
+
+                    // other answering users in the page
+                    let answeringUsers = document.getElementById(`answer-username${w}`).textContent;
+
+                    if (answeringUser == answeringUsers) {
+                        let totalUpvotesCount = document.getElementById(`total-upvotes-count${w}`);
+                        totalUpvotesCount.textContent = parseInt(totalUpvotesCount.textContent) + 1;
+                    }
+                }
+
+                // we send to the server the order of updating the current amount of upvotes of the answering user (+)
+                socket.emit('update-upvote', {
+                    operation: 'add',
+                    answeringUser: document.getElementById(`answer-username${i}`).textContent,
+                    user: localStorage.getItem('username'),
+                    questionId: window.location.pathname,
+                    answerPosition: String(i)
+                });
+            
+            // if the button was pressed (we take the upvote out)
+            } else {
+                // we send to the server the order of updating the current amount of upvotes of the answering user (-)
+                socket.emit('update-upvote', {
+                    operation: 'subtract',
+                    answeringUser: document.getElementById(`answer-username${i}`).textContent,
+                    user: localStorage.getItem('username'),
+                    questionId: window.location.pathname,
+                    answerPosition: String(i)
+                });
+
+                // adding the value in the DOM
+                for (let w = 0; w < '<%= answers.length %>'; w++) {
+                    // user in particular upvoted answer
+                    let answeringUser = document.getElementById(`answer-username${i}`).textContent;
+
+                    // other answering users in the page
+                    let answeringUsers = document.getElementById(`answer-username${w}`).textContent;
+
+                    if (answeringUser == answeringUsers) {
+                        let totalUpvotesCount = document.getElementById(`total-upvotes-count${w}`);
+                        totalUpvotesCount.textContent = parseInt(totalUpvotesCount.textContent) - 1;
+                    }
+                }
+
+                // changing the upvote button color
+                upvoteButton.style.color = 'rgba(0, 0, 0, 0.55)';
+            }
+        }
+    </script>
+
+    <script>
+        // do not render upvote buttons if the user has not authenticated
+        if ('<%= permission %>' == 'false') {
+            console.log('caca de vaca');
+            for (let i = 0; i < '<%= answers.length %>'; i++) {
+                var upvoteButton = document.getElementById(`upvote-button${i}`);
+                upvoteButton.style.display = 'none';
+            }
+        }
+    </script>
+
     <!-- remove LaTeX in an answer if it shouldn't be applied -->
     <% function correctLatex(latexOnOff, questionAnswer) { %>
         <% if (latexOnOff == 'on') { %>
@@ -366,21 +566,4 @@
             <% return (answerModified) %>
         <% } %>
     <% } %>
-
 </body>
-
-
-
-<!--
-    // first script
-            let latexScript = document.createElement('script');
-            latexScript.type = "text/x-mathjax-config";
-            latexScript.textContent = 'MathJax.Hub.Config({ jax: ["input/TeX", "output/HTML-CSS"], extensions: ["tex2jax.js"], "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }, tex2jax: { inlineMath: [ ["$", "$"] ], displayMath: [ ["$$","$$"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno" }, TeX: { noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } } }, messageStyle: "none" });';
-            document.head.appendChild(latexScript);
-
-            // second script
-            let latexScript2 = document.createElement('script');
-            latexScript2.type = "text/javascript";
-            latexScript2.src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js";
-            document.head.appendChild(latexScript2);
--->
