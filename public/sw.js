@@ -1,5 +1,3 @@
-
-
 var CACHE_NAME = 'version-1'; // bump this version when you make changes.
 // Put all your urls that you want to cache in this array
 var urlsToCache = [
@@ -26,6 +24,11 @@ self.addEventListener('fetch', function(event) {
         .then(function(response) {
             // Cache hit - return response
             if (response) return response;
+
+            if (event.request.cache === 'only-if-cached' && event.request.mode !== 'same-origin') {
+                return fetch('/');
+            }
+
             return fetch(event.request);
         })
     );
@@ -88,4 +91,3 @@ self.addEventListener('notificationclick', function(e) {
         notification.close();
     }
 });
-
