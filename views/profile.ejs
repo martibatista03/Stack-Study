@@ -1,0 +1,166 @@
+<%- include ('partials/_header'); -%>
+
+<style>
+    body {
+        background-color: #188efc41;
+    }
+
+    .page-container {
+        display: flex;
+        justify-content: center;
+    }
+
+    .form-container {
+        margin-top: 15vh;
+        margin-bottom: 100px;
+        width: 900px;
+        min-height: 200px;
+        background-color: white;
+        border-radius: 20px;
+        border: 3px solid  #006cd1;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    .initial-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 40px;
+    }
+
+    #icon {
+        font-size: 90px;
+        margin-right: 15px;
+    }
+
+    .username {
+        font-size: 35px;
+    }
+
+    .email {
+        font-size: 20px; 
+        color: #005EFF;
+    }
+
+    .introduction {
+        margin-left: 15px;
+        display: flex; 
+        flex-direction: column;
+    }
+
+    .description {
+        margin-top: 35px;
+        text-align:center;
+        font-size: 18px;
+        color: rgba(0, 0, 0, 0.6);
+    }
+
+    .study-aspects {
+        margin-top: 30px;
+        margin-bottom: 35px;
+        text-align: center;
+        font-size: 18px;
+    }
+
+    .edit-button {
+        font-size: 18px;
+        margin: 0 auto;
+        margin-bottom: 35px;
+        border: 2px solid white;
+        border-radius: 18px;
+        background-color: #0063c0;
+        color: white;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 30px;
+        padding-right: 30px;
+        transition-duration: 0.2s;
+    }
+
+    .edit-button:hover {
+        text-decoration: none;
+        background-color: white;
+        border: 2px solid #0063c0c0;
+        color: #01417e;
+    }
+
+</style>
+
+<!-- Mobile -->
+<style>
+
+@media only screen and (max-width: 20cm) {
+    .form-container {
+        margin-top: 2vh;
+        width: 95vw;
+        min-height: 100px;
+    }
+    
+    .initial-container {
+        margin-top: 25px;
+    }
+
+    #icon {
+        font-size: 60px;
+        margin-right: 10px;
+    }
+
+    .introduction {
+        margin-top: 3px;
+        margin-left: 10px;
+    }
+
+    .username {
+        font-size: 22px;
+    }
+
+    .email {
+        font-size: 15px;
+    }
+
+    .description {
+        margin-top: 20px;
+        padding-left: 15px;
+        padding-right: 15px;
+        overflow-wrap: break-word;
+        font-size: 15px;
+    }
+
+    .study-aspects {
+        margin-top: 15px;
+        margin-bottom: 20px;
+        font-size: 15px;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .edit-button {
+        margin-bottom: 25px;
+        font-size: 15px;
+    }
+}
+
+</style>
+
+<body>
+    <div class="page-container">
+        <div class="form-container">
+            <div class="initial-container">
+                <div> <i id="icon" class="fas fa-user"></i> </div>
+                <div class="introduction">
+                    <span class="username"> <%= username %> </span>
+                    <span class="email"> <%= email %> </span>
+                </div>
+            </div>
+            <div class="description">
+                <i> <%= description %> </i>
+            </div>
+            <div class="study-aspects">
+                <div> <b> Àrea d'estudi: </b> &nbsp <i> <%= studyScope %> </i> </div>
+                <div> <b> Especialitat: </b> &nbsp <i> <%= speciality %> </i> </div>
+            </div>
+            <a class="edit-button" href="/profile/edit-profile/<%= id %>"> Edita </a>
+        </div>
+    </div>
+</body>

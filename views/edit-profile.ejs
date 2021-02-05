@@ -1,0 +1,230 @@
+<%- include ('partials/_header'); -%>
+
+<style>
+    body {
+        background-color: #188efc41;
+    }
+
+    .page-container {
+        display: flex;
+        justify-content: center;
+    }
+
+    .form-container {
+        margin-top: 15vh;
+        margin-bottom: 100px;
+        width: 900px;
+        min-height: 200px;
+        background-color: white;
+        border-radius: 20px;
+        border: 3px solid  #006cd1;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .header-container {
+        margin-top: 30px;
+        margin-bottom: 10px;
+        display: flex;
+        flex-direction: row;
+    }
+
+    #icon {
+        font-size: 90px;
+        margin-right: 15px;
+    }
+
+    .introduction {
+        display: flex;
+        flex-direction: column;
+        margin-left: 15px;
+    }
+
+    .username {
+        font-size: 35px;
+    }
+
+    .email {
+        font-size: 20px;
+        color: #005EFF
+    }
+
+    .description-container {
+        margin-top: 30px;
+        font-size: 18px;
+    }
+
+    #study-scope {
+        border-radius: 7px;
+        padding: 7px;
+        border: 2px solid rgb(73, 73, 73);
+    }
+
+    #speciality {
+        width: 224px;
+        border-radius: 7px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 7px;
+        border: 2px solid rgb(73, 73, 73);
+
+    }
+
+    .submit-button {
+        font-size: 18px;
+        margin: 0 auto;
+        margin-bottom: 35px;
+        border: 2px solid white;
+        border-radius: 18px;
+        background-color: #0063c0;
+        color: white;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 30px;
+        padding-right: 30px;
+        transition-duration: 0.2s;
+    }
+
+    .description {
+        width: 600px;
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        max-height: 550px;
+        margin-bottom: 20px;
+        border-radius: 15px;
+        border: 2px solid rgb(73, 73, 73);
+    }
+
+    .submit-button:hover {
+        text-decoration: none;
+        background-color: white;
+        border: 2px solid #0063c0c0;
+        color: #01417e;
+    }
+
+</style>
+
+<!-- Mobile -->
+<style>
+
+@media only screen and (max-width: 20cm) {
+    .form-container {
+        margin-top: 2vh;
+        width: 95vw;
+    }
+
+    .header-container {
+        margin-top: 25px;
+        margin-bottom: 0px;
+    }
+
+    #icon {
+        font-size: 60px;
+        margin-right: 10px;
+    }
+
+    .introduction {
+        margin-left: 10px;
+    }
+
+    .username {
+        font-size: 22px;
+    }
+
+    .email {
+        font-size: 15px;
+    }
+
+    .description-container {
+        margin-top: 25px;
+        font-size: 15px;
+    }
+
+    #study-scope {
+        width: 50vw;
+    }
+
+    #speciality {
+        width: 57vw;
+    }
+
+    .description {
+        width: 86vw;
+        margin-bottom: 12px;
+    }
+
+    .submit-button {
+        font-size: 15px;
+        margin-bottom: 25px;
+    }
+}
+
+</style>
+
+<body>
+    <div class="page-container">
+        <div class="form-container">
+            <div class="header-container">
+                <span> <i id="icon" class="fas fa-user"></i> </span>
+                <span class="introduction">
+                    <span class="username"> <%= username %> </span>
+                    <span class="email"> <%= email %> </span>
+                </span>
+            </div>
+            <form action="/profile/edit-profile" method="POST">
+                <div class="description-container">
+                    <span> <b> Àmbit d'estudi: &nbsp </b> </span>
+                    <select required name="studyScope" id="study-scope">
+                        <option value="" disabled selected>Selecciona l'àmbit d'estudi</option>
+                        <option value="Arts">Arts</option>
+                        <option value="Ciències físiques">Ciències físiques</option>
+                        <option value="Ciències naturals">Ciències naturals</option>
+                        <option value="Ciències socials i jurídiques">Ciències socials i jurídiques</option>
+                        <option value="Enginyeria i Arquitectura">Enginyeria i Arquitectura</option>
+                        <option value="Filologia i humanitats">Filologia i humanitats</option>
+                        <option value="Matemàtiques">Matemàtiques</option>
+                    </select>
+                </div>
+                <div class="description-container">
+                    <span> <b> Especialitat: &nbsp </b> </span>
+                    <input type="text" name="speciality" id="speciality" />
+                </div>
+                <div class="description-container">
+                    <p style="margin-bottom: 25px;"> <i> Aquí pots fer una petita descripció de qui ets... <i> </p>
+                    <textarea name="description"
+                        rows="10"
+                        cols="25"
+                        class="description"
+                        id="description">
+                    </textarea>
+                </div>
+                <input type="hidden" value="<%= id %>" name="userId" />
+                <button type="submit" class="submit-button"> Envia </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // get the DOM values
+        let studyScope = document.getElementById('study-scope');
+        let speciality = document.getElementById('speciality');
+        let description = document.getElementById('description');
+
+        // convert HTML entities
+        function trick(x){
+            var a = document.createElement('div');
+            a.innerHTML = x;
+            return a.innerHTML;
+        }
+
+        // insert the previous initial values
+        studyScope.value = '<%= studyScope %>';
+        speciality.value = trick('<%= speciality %>');
+        description.value = trick('<%= description %>');
+    </script>
+
+</body>
