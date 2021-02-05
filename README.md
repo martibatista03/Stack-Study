@@ -41,7 +41,7 @@ If you want to try out a user's experience in your cloned app, you can follow th
 4. Once you have published your answer, if you access again to your question page, you will see the original question you asked and the answer you have just given. 
 <br/>
 <div align="center">
-  <img width="230" src="https://i.imgur.com/0NuLmy5.png"/>
+  <img width="230" src="https://i.imgur.com/D7nom3J.png"/>
 </div>
 
 ## Author
