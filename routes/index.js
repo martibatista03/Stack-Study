@@ -5,7 +5,7 @@ var nodemailer = require('nodemailer');
 var ObjectId = require('mongodb').ObjectId;
 const router = express.Router();
 
-// Mail transporter+
+// Mail transporter
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -15,13 +15,9 @@ const transporter = nodemailer.createTransport({
     tls: { rejectUnauthorized: false }
 });
 
-// Database model => Register Schema
+// Database models
 const registerSchema = require('../models/register');
-
-// Database model => User Authentication Schema
 const userAuthentication = require('../models/user_auth');
-
-// Database model => Questions
 const questionSchema = require('../models/question');
 
 // Initial route
@@ -51,51 +47,136 @@ router.get('/index', async (req, res) => {
         }
 
         // render the main page
-        res.render('index', { questionTitle: questionTitles, questionId: questionId, arrowsNeeded: arrowsNeeded });
+        res.render('index', { questionTitle: questionTitles, questionId: questionId, arrowsNeeded: arrowsNeeded, userId: 'null'});
     });
 });
 
 // Login (Inicia sessió)
 router.get('/login', async (req, res) => {
-    res.render('login', { invalidCredentials : ' ', backgroundColor : 'rgba(255, 255, 255, 0' });
+    res.render('login', { invalidCredentials : ' ', backgroundColor : 'rgba(255, 255, 255, 0)', userId: 'null' });
 });
 
 // Register (Crea un compte)
 router.get('/register', async (req, res) => {
-    res.render('register');
+    res.render('register', { usedUsername: ' ', backgroundColor : 'rgba(255, 255, 255, 0)', userId: 'null' });
+});
+
+// Enter to profile (username)
+router.get('/profile/:userId', async (req, res) => {
+    let { userId } = req.params;
+    
+    // search the user
+    registerSchema.findOne({ "_id": new ObjectId(userId) }, (err, user) => {
+        // check if the user has set a study scope
+        if (user.studyScope != null) {
+            var studyScope = user.studyScope;
+
+        } else {
+            var studyScope = "Estableix la teva àrea d'estudi."
+        }
+
+        // check if the user has set a speciality
+        if (user.speciality != null && user.speciality.length != 0) {
+            var speciality = user.speciality;
+
+        } else {
+            var speciality = "Estableix la teva especialitat."
+        }
+
+        // check if the user has set a description
+        if (user.description != null && user.description.length != 0) {
+            var description = user.description;
+
+        } else {
+            var description = "Edita el teu perfil per a establir una descripció que t'introdueixi a la resta d'usuaris."
+        }
+
+        res.render('profile', { id: user.id, username: user.username, email: user.mail, studyScope: studyScope, speciality: speciality, description: description, userId: 'null' });
+    });
+});
+
+// edit profile
+router.get('/profile/edit-profile/:userId', (req, res) => {
+    let { userId } = req.params;
+    
+    // search the profile parameters
+    registerSchema.findOne({ "_id": new ObjectId(userId) }, (err, user) => {
+        // render the edit profile page
+        res.render('edit-profile', { id: user.id, username: user.username, email: user.mail, studyScope:  user.studyScope, speciality: user.speciality, description: user.description, userId: 'null' });
+    });
+});
+
+// edit profile POST
+router.post('/profile/edit-profile', async (req, res) => {
+    // update the new personal values
+    await registerSchema.findOneAndUpdate({ "_id": new ObjectId(req.body.userId) }, { $set: { studyScope: req.body.studyScope, speciality: req.body.speciality, description: req.body.description } });
+
+    // redirect to the profile page
+    res.redirect(`/profile/${req.body.userId}`);
 });
 
 // Ask question (Fes una nova pregunta)
 router.get('/ask_question', async (req, res) => {
-    res.render('ask_question');
+    res.render('ask_question', { userId: 'null' });
 });
 
 // Answer question (Veure llistat de preguntes)
 router.get('/answer_question', async (req, res) => {
-    res.render('answer_question');
+    res.render('answer_question', { userId: 'null' });
 });
 
-// Resgister POST
+// Register POST
 router.post('/register/data', async (req, res) => {
-    // password encryption
-    req.body.password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
+    // check if the username is already in use
+    registerSchema.findOne({ username: req.body.username }, async (err, user) => {
+        // username not in use
+        if (user == null) {
+            // password encryption
+            req.body.password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
 
-    // Parameters to be saved
-    const registerForm = new registerSchema(req.body);
+            // Parameters to be saved
+            const registerForm = new registerSchema(req.body);
 
-    // Preparing the log in authentication
-    const userLogIn = new userAuthentication({
-        isAuth: true,
-        username: req.body.username
+            // Preparing the log in authentication
+            const userLogIn = new userAuthentication({
+                username: req.body.username,
+                userId: registerForm._id
+            });
+
+            // saving the register values
+            await registerForm.save();
+
+            // saving the log in values
+            await userLogIn.save();
+
+            // we need to render the entire initial page again, but this time with the userId
+            questionSchema.find({}, (err, questions) => {
+                let questionTitles = [];
+                let questionId = [];
+
+                if (questions.length < 10) {
+                    for (let i = 0; i < questions.length; i++) {
+                        questionTitles.push(questions[i].questionTitle);
+                        questionId.push(questions[i]._id);
+                        var arrowsNeeded = false;
+                    }
+
+                } else {
+                    for (let i = 0; i < 10; i++) {
+                        questionTitles.push(questions[i].questionTitle);
+                        questionId.push(questions[i]._id);
+                        var arrowsNeeded = true;
+                    }
+                }
+
+                res.render('index', { questionTitle: questionTitles, questionId: questionId, arrowsNeeded: arrowsNeeded, userId: registerForm._id, userId: 'null' });
+            });
+        
+        // username in use
+        } else {
+            res.render('register', { usedUsername: 'Aquest nom d\'usuari ja es troba en ús' , backgroundColor : '#fd8181a1', userId: 'null' });
+        }
     });
-
-    // saving the register values
-    await registerForm.save();
-
-    // saving the log in values
-    await userLogIn.save();
-
-    res.redirect('/index');
 });
 
 // Login POST
@@ -106,27 +187,47 @@ router.post('/login/data', async (req, res) => {
             // password comparation, if user found
             if (bcrypt.compareSync(req.body.password, user.password) == false) {
                 // Invalid credentials message
-                res.render('login', { invalidCredentials : "Credencials Invàlides", backgroundColor : "#fd8181a1" });
+                res.render('login', { invalidCredentials : "Credencials Invàlides", backgroundColor : "#fd8181a1", userId: 'null' });
             } else {
                 // Preparing the log in authentication
                 const userLoggedIn = new userAuthentication({
-                    isAuth: true,
-                    username: user.username
+                    username: user.username,
+                    userId: user._id
                 });
 
                 // Checking if the user is already logged in
-                userAuthentication.findOne({ username: user.username }, async (err, loggedUser) => {
+                userAuthentication.findOne({ userId: user._id }, async (err, loggedUser) => {
                     if (loggedUser == null) {
                         await userLoggedIn.save();
                     } 
                 });
 
-                // render the main page again
-                res.redirect('/index');
+                // render the main page again but with the userId this time
+                questionSchema.find({}, (err, questions) => {
+                    let questionTitles = [];
+                    let questionId = [];
+    
+                    if (questions.length < 10) {
+                        for (let i = 0; i < questions.length; i++) {
+                            questionTitles.push(questions[i].questionTitle);
+                            questionId.push(questions[i]._id);
+                            var arrowsNeeded = false;
+                        }
+    
+                    } else {
+                        for (let i = 0; i < 10; i++) {
+                            questionTitles.push(questions[i].questionTitle);
+                            questionId.push(questions[i]._id);
+                            var arrowsNeeded = true;
+                        }
+                    }
+    
+                    res.render('index', { questionTitle: questionTitles, questionId: questionId, arrowsNeeded: arrowsNeeded, userId: user._id });
+                });
             }
         } else {
             // Invalid credentials when user not found
-            res.render('login', { invalidCredentials : "Credencials Invàlides", backgroundColor : "#fd8181a1" }); 
+            res.render('login', { invalidCredentials : "Credencials Invàlides", backgroundColor : "#fd8181a1", userId: 'null' }); 
         }
     });
 });
@@ -183,7 +284,7 @@ router.post('/question', (req, res) => {
         }
 
         if (question.length > 0) {
-            res.render('choose_question', { questionTitle: questionsTitlesArray, questionId: questionsIdArray, arrowsNeeded: arrowsNeeded });
+            res.render('choose_question', { questionTitle: questionsTitlesArray, questionId: questionsIdArray, arrowsNeeded: arrowsNeeded, userId: 'null' });
 
         } else {
             res.redirect('/index');
@@ -191,14 +292,100 @@ router.post('/question', (req, res) => {
     });
 });
 
-// see the question 
-router.get('/question/:questionId', (req, res) => {
+// see the question POST
+router.post('/question/:questionId', (req, res) => {
     // Question Id, gotten from the possible choices
     let { questionId } = req.params;
 
+    // get the watching user so that we can check how many answers has already upvoted
+    let username = req.body.username;
+
     // we search the specific question and render it
-    questionSchema.findOne({ "_id": new ObjectId(questionId) }, (err, question) => {
-        res.render('question_model', { username: question.username, questionTitle: question.questionTitle, question: question.question, questionId: questionId, answers: question.questionAnswer, answerUsers: question.questionAnswerUsers, latexOnOffAnswer: question.latexOnOffAnswer, latexOnOff: question.latexOnOff, subject: question.subject, keyConcept: question.keyConcept });
+    questionSchema.findOne({ "_id": new ObjectId(questionId) }, async (err, question) => {
+        // array where we stock the amount of upvotes of every answering user
+        let upvotesArray = [];
+
+        // get the quantity of upvotes of every answering user
+        for (let i = 0; i < question.questionAnswerUsers.length; i++) {
+            let user = await registerSchema.findOne({ username: question.questionAnswerUsers[i][0] }).exec();
+            upvotesArray.push(user.upvotes);
+        }
+
+        await registerSchema.findOne({ username: username }, async (err, user) =>{
+            // case where the user does not have authentication
+            if (user == null) {
+                res.render('question_model', { 
+                    username: question.username, 
+                    questionTitle: question.questionTitle, 
+                    question: question.question, 
+                    questionId: questionId, 
+                    answers: question.questionAnswer, 
+                    answerUsers: question.questionAnswerUsers, 
+                    latexOnOffAnswer: question.latexOnOffAnswer, 
+                    latexOnOff: question.latexOnOff, 
+                    subject: question.subject, 
+                    keyConcept: question.keyConcept, 
+                    upvotes: upvotesArray,
+                    matchedAnswers: [],
+                    permission: false,
+                    userId: 'null'
+                });
+            } else {
+                // if user has already upvoted in this page => store them
+                let matchedAnswers = undefined;
+
+                // check if the user is authenticated
+                let registeredUser = await userAuthentication.findOne({ userId: user._id }).exec();
+
+                // case where the user has authentication
+                if (registeredUser) {
+                    for (let i = 0; i < user.upvotedAnswers.length; i++) {
+                        if (user.upvotedAnswers[i][0] == `/question/${questionId}`) {
+                            user.upvotedAnswers[i].shift();
+                            matchedAnswers = user.upvotedAnswers[i];
+                            break;
+                        }
+                    }
+            
+                    // render the question page
+                    res.render('question_model', { 
+                        username: question.username, 
+                        questionTitle: question.questionTitle, 
+                        question: question.question, 
+                        questionId: questionId, 
+                        answers: question.questionAnswer, 
+                        answerUsers: question.questionAnswerUsers, 
+                        latexOnOffAnswer: question.latexOnOffAnswer, 
+                        latexOnOff: question.latexOnOff, 
+                        subject: question.subject, 
+                        keyConcept: question.keyConcept, 
+                        upvotes: upvotesArray,
+                        matchedAnswers: matchedAnswers,
+                        permission: true, 
+                        userId: 'null'
+                    });
+
+                // case where it is not authenticated
+                } else {
+                    res.render('question_model', { 
+                        username: question.username, 
+                        questionTitle: question.questionTitle, 
+                        question: question.question, 
+                        questionId: questionId, 
+                        answers: question.questionAnswer, 
+                        answerUsers: question.questionAnswerUsers, 
+                        latexOnOffAnswer: question.latexOnOffAnswer, 
+                        latexOnOff: question.latexOnOff, 
+                        subject: question.subject, 
+                        keyConcept: question.keyConcept, 
+                        upvotes: upvotesArray,
+                        matchedAnswers: [],
+                        permission: false,
+                        userId: 'null'
+                    });
+                }
+            }
+        });
     });
 });
 
@@ -208,7 +395,7 @@ router.post('/answer-question/:questionId/', async (req, res) => {
     let { questionId } = req.params;
 
     // check if the user has authentication
-    userAuthentication.findOne({ username: req.body.username }, (err, checkedUser) => {
+    userAuthentication.findOne({ userId: req.body.userIdAnswer }, (err, checkedUser) => {
         // case where it is not
         if (checkedUser == null) {
             res.redirect('/register');
@@ -219,47 +406,58 @@ router.post('/answer-question/:questionId/', async (req, res) => {
                 if (!req.body.latexOnOffAnswer) {
                     req.body.latexOnOffAnswer = 'off';
                 }
+             
+                // we search the study scope and speciality of the user that gives an answer
+                registerSchema.findOne({ "username": req.body.username }, (err, user) => {
+                    var studyScope = user.studyScope;
+                    var speciality = user.speciality;
 
-                // we get the actual array
-                let questionAnswerArray = question.questionAnswer;
-                let questionAnswerUserArray = question.questionAnswerUsers;
-                let latexOnOffAnswerArray = question.latexOnOffAnswer;
+                    // we get the current array
+                    let questionAnswerArray = question.questionAnswer;
+                    let questionAnswerUserArray = question.questionAnswerUsers;
+                    let latexOnOffAnswerArray = question.latexOnOffAnswer;
 
+                    // send email if this is the first answer
+                    if (questionAnswerArray.length == 0) {
+                        // getting the user email
+                        registerSchema.findOne({ "username": question.username }, (err, user) => {
+                            var mailOptions = {
+                                from: 'stackstudy3@gmail.com',
+                                to: user.mail,
+                                subject: 'La teva pregunta ha rebut la seva primera resposta!',
+                                html: '<!-- Bootstrap --> <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous"><body style="background-color: #188efc41;"><center><br><br><br><div style="width: 900px; height: 220px; background-color:white; border-radius: 10px; color:black"><div><br><img src="https://i.imgur.com/RjZOMts.jpg" style="width: 170px; vertical-align: middle;" /><span style="font-size: 27px; vertical-align: middle; padding-left: 20px;"> <b> <i> La teva pregunta ha rebut la primera resposta! </i> </b></span></div><p style="text-align: center; font-size: 18px; margin-top: 17px;"> Hola ' + question.username + '!</span> Entra a <a href="https://stack-study.herokuapp.com/question/' + questionId + '">Stack Study</a> i consulta-la.</div></center><br><br><br></body>',                          
+                            };
+                            
+                            transporter.sendMail(mailOptions, function(error, info){
+                                if (error) {
+                                    console.log(error);
+                                } else {
+                                    console.log('Email sent: ' + info.response);
+                                }
+                                transporter.close();
+                            });
+                        })
+                    }
 
-                // send email if this is the first answer
-                if (questionAnswerArray.length == 0) {
-                    // getting the user email
-                    registerSchema.findOne({ "username": question.username }, (err, user) => {
-                        console.log(user.mail);
-                        var mailOptions = {
-                            from: 'stackstudy3@gmail.com',
-                            to: user.mail,
-                            subject: 'La teva pregunta ha rebut la seva primera resposta!',
-                            html: '<!-- Bootstrap --> <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous"><body style="background-color: #188efc41;"><center><br><br><br><div style="width: 900px; height: 220px; background-color:white; border-radius: 10px; color:black"><div><br><img src="https://i.imgur.com/RjZOMts.jpg" style="width: 170px; vertical-align: middle;" /><span style="font-size: 27px; vertical-align: middle; padding-left: 20px;"> <b> <i> La teva pregunta ha rebut la primera resposta! </i> </b></span></div><p style="text-align: center; font-size: 18px; margin-top: 17px;"> Hola ' + question.username + '!</span> Entra a <a href="https://stack-study.herokuapp.com/question/' + questionId + '">Stack Study</a> i consulta-la.</div></center><br><br><br></body>',                          
-                        };
-                        
-                        transporter.sendMail(mailOptions, function(error, info){
-                            if (error) {
-                              console.log(error);
-                            } else {
-                              console.log('Email sent: ' + info.response);
-                            }
-                            transporter.close();
-                        });
-                    })
-                }
+                    // If there is a study scope and speciality defined, we add it to the username
+                    // in the DOM we'll convert this string into an array and get each value
+                    if (studyScope != undefined && speciality != undefined) {
+                        var answeringUser = [req.body.username, studyScope, speciality];
+                    } else {
+                        var answeringUser = [req.body.username];
+                    }
 
-        
-                // we add the new answer
-                questionAnswerArray.push(req.body.questionAnswer);
-                questionAnswerUserArray.push(req.body.username);
-                latexOnOffAnswerArray.push(req.body.latexOnOffAnswer);
-        
-                // We update the array of answers (again, we need to add a function for some reason)
-                questionSchema.findOneAndUpdate( {"_id": new ObjectId(questionId) }, { questionAnswer : questionAnswerArray, questionAnswerUsers : questionAnswerUserArray, latexOnOffAnswer: latexOnOffAnswerArray }, () => {});
-        
-                // redirect to the main page
-                res.redirect('/index');
+                    // we add the new answer
+                    questionAnswerArray.push(req.body.questionAnswer);
+                    questionAnswerUserArray.push(answeringUser);
+                    latexOnOffAnswerArray.push(req.body.latexOnOffAnswer);
+            
+                    // We update the array of answers (again, we need to add a function for some reason)
+                    questionSchema.findOneAndUpdate( {"_id": new ObjectId(questionId) }, { questionAnswer : questionAnswerArray, questionAnswerUsers : questionAnswerUserArray, latexOnOffAnswer: latexOnOffAnswerArray }, () => {});
+            
+                    // redirect to the main page
+                    res.redirect('/index');
+                });
             });
         }
     })
@@ -290,7 +488,7 @@ router.post('/filter-question', (req, res) => {
             var arrowsNeeded = false;
     
             // render the main page
-            res.render('index', { questionTitle: questionTitles, questionId: questionId, arrowsNeeded: arrowsNeeded });
+            res.render('index', { questionTitle: questionTitles, questionId: questionId, arrowsNeeded: arrowsNeeded, userId: 'null' });
         });
 
     } else if(req.body.subject) {
@@ -315,7 +513,7 @@ router.post('/filter-question', (req, res) => {
             var arrowsNeeded = false;
     
             // render the main page
-            res.render('index', { questionTitle: questionTitles, questionId: questionId, arrowsNeeded: arrowsNeeded });
+            res.render('index', { questionTitle: questionTitles, questionId: questionId, arrowsNeeded: arrowsNeeded, userId: 'null' });
         });
 
     } else if (req.body.keyConcept) {
@@ -340,7 +538,7 @@ router.post('/filter-question', (req, res) => {
             var arrowsNeeded = false;
     
             // render the main page
-            res.render('index', { questionTitle: questionTitles, questionId: questionId, arrowsNeeded: arrowsNeeded });
+            res.render('index', { questionTitle: questionTitles, questionId: questionId, arrowsNeeded: arrowsNeeded, userId: 'null' });
         });
     }
 });
@@ -368,7 +566,7 @@ router.post('/pass-page', (req, res) => {
 
                 // just accept passing the page if there are pages to show
                 if (nextQuestionTitles.length != 0) {
-                    res.render('choose_question', { questionTitle: nextQuestionTitles, questionId: nextQuestionId, arrowsNeeded: true });
+                    res.render('choose_question', { questionTitle: nextQuestionTitles, questionId: nextQuestionId, arrowsNeeded: true, userId: 'null' });
 
                 } else {
                     res.status(204).send()
@@ -395,7 +593,7 @@ router.post('/pass-page', (req, res) => {
 
                 // just accept passing the page if there are pages to show
                 if (nextQuestionTitles.length != 0) {
-                    res.render('choose_question', { questionTitle: nextQuestionTitles, questionId: nextQuestionId, arrowsNeeded: true });
+                    res.render('choose_question', { questionTitle: nextQuestionTitles, questionId: nextQuestionId, arrowsNeeded: true, userId: 'null' });
 
                 } else {
                     res.status(204).send()
@@ -431,7 +629,7 @@ router.post('/pass-page-index', (req, res) => {
 
                 // just accept passing the page if there are pages to show
                 if (nextQuestionTitles.length != 0) {
-                    res.render('index', { questionTitle: nextQuestionTitles, questionId: nextQuestionId, arrowsNeeded: true });
+                    res.render('index', { questionTitle: nextQuestionTitles, questionId: nextQuestionId, arrowsNeeded: true, userId: 'null' });
 
                 } else {
                     res.status(204).send()
@@ -458,7 +656,7 @@ router.post('/pass-page-index', (req, res) => {
 
                 // just accept passing the page if there are pages to show
                 if (nextQuestionTitles.length != 0) {
-                    res.render('index', { questionTitle: nextQuestionTitles, questionId: nextQuestionId, arrowsNeeded: true });
+                    res.render('index', { questionTitle: nextQuestionTitles, questionId: nextQuestionId, arrowsNeeded: true, userId: 'null' });
 
                 } else {
                     res.status(204).send()
