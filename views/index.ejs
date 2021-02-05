@@ -76,7 +76,7 @@
         
         #make-question {
             border: 2px solid white;
-            border-radius: 20px;
+            border-radius: 15px;
             background-color: #002649ea;
             color: white;
             margin-top: 10px;
@@ -189,6 +189,17 @@
             padding-top: 7px;
             padding-bottom: 7px;
             border-radius: 10px;
+            margin-block-end: 0;
+        }
+
+        #question-label-title {
+            width: 100%;
+            height: 100%;
+            text-align: left;
+            border: 0;
+            background-color: rgba(255, 255, 255, 0);
+            font-size: 32px;
+            font-weight: 500;
         }
 
         .question-label:hover {
@@ -197,6 +208,7 @@
         }
 
         .question-title:hover, .sample-questions, .sample-questions:hover {
+            margin-block-end: 0;
             text-decoration: none; 
             color: black;
         }
@@ -352,10 +364,9 @@
             }
 
             #question-label-title {
-                font-size: 27px;
+                font-size: 23px;
             }
 
-            /* ja està */
             .no-matches-found {
                 font-size: 17px;
             }
@@ -428,7 +439,14 @@
 
         <div class="sample-questions-container">
             <% for (let i = 0; i < questionTitle.length; i++) { %>
-                <div class="question-label"> <a class="sample-questions" href="/question/<%= questionId[i] %>"> <h2 id="question-label-title"> <%= questionTitle[i] %> <h2> </a> </div>
+                <div class="question-label"> 
+                    <form class="sample-questions" action="/question/<%= questionId[i] %>" method="POST">
+                        <!-- we add the username value in this form so that we can then check in the question page 
+                        which questions has this user already upvoted -->
+                        <input type="hidden" name="username" id="username<%= i %>" value="" />
+                        <button type="submit" id="question-label-title"> <%= questionTitle[i] %> </button>
+                    </form> 
+                </div>
             <% } %>
             <% if (questionTitle.length == 0) { %>
                 <div class="no-matches-found"> <i> No s'ha trobat cap resultat </i> </div>
@@ -452,26 +470,33 @@
     </div>
 
     <script>
-        // delay 
-        function delay(delay) {
-            var start = new Date().getTime();
-            while (new Date().getTime() < start + delay);
-        }
-
         // send username to the server so that it can check if the user is allowed to make a question
         function checkAuth() {
+            // get the essential paramethers
             let username = localStorage.getItem('username');
+            let userId = localStorage.getItem('userId');
 
-            socket.emit('user-check-auth', username);
-            delay(100);
+            // send the paramethers and wait for a response
+            socket.emit('user-check-auth', {
+                username: username,
+                userId: userId
+            }); 
         }
 
         // the server answers giving / not giving permssion
         socket.on('question-redirection', (route) => {
             window.location.href = route;
         });
-
     </script>
+
+    <script>
+        // we add username to the question form
+        for (let i = 0; i < '<%= questionTitle.length %>'; i++) {
+            let username = document.getElementById(`username${i}`);
+            username.value = localStorage.getItem('username');
+        }
+    </script>
+
     <script>
 
         // ServiceWorker Registration
@@ -569,4 +594,3 @@
             }
         }
     </script>
-    
