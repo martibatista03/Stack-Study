@@ -27,7 +27,7 @@
             justify-content: flex-end;
         }
 
-        #session {
+        .session {
             border: 2px solid white;
             border-radius: 18px;
             background-color: #0063c0;
@@ -40,12 +40,30 @@
             margin-left: 20px;
         }
 
-        #session:hover {
+        .session:hover {
             text-decoration: none;
             background-color: white;
-            color: #188efcaf;
             border: 2px solid #0063c0c0;
             color: #01417e;
+        }
+
+        .profile-button {
+            border: 2px solid white;
+            border-radius: 18px;
+            background-color: #A6C7FF;
+            color: #002361;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            padding-left: 20px;
+            padding-right: 20px;
+            transition-duration: 0.2s;
+            margin-left: 20px;
+        }
+
+        .profile-button:hover {
+            text-decoration: none;
+            border: 2px solid #002361;
+            background-color: white;
         }
 
         /* Mobile */
@@ -66,45 +84,102 @@
                 width: 100%;
                 padding-right: 0vw;
                 font-size: 15px;
+                justify-content: center;
             }
 
-            #session {
-                padding-left: 15px;
-                padding-right: 15px;
-                transition-duration: 0.2s;
-                margin-left: 10px;
-                margin-right: 10px;
+            .session {
                 text-align: center;
+                margin-right: 20px;
+            }
+
+            .profile-button {
+                text-align: center;
+                margin-left: 0px;
             }
         }
 
     </style>
 
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+
     <body>
         <nav id="big-container" class="navbar navbar-light mb-4 bg-white">
             <a href="/" class="navbar-brand"> <img id="title" src="https://i.imgur.com/RjZOMts.jpg" /> </a>
             <div id="nav-container">
-                <a href="/login" id="session"> Inicia sessió </a>
-                <a href="/register" id="session"> Crea un compte </a>
-                <a onclick="logOut()" id="session" href="/"> Tanca sessió </a>
+                <!--
+                <a href="/login" id="session"> </a>
+                <a href="/register" id="session"> </a>
+                <a onclick="logOut()" id="session" href="/"> </a>
+                -->
+                <a id='first-button' class='session'> </a>
+                <a id='second-button' class='session'> </a>
             </div>
         </nav>
 
     <script src="/socket.io/socket.io.js" charset="utf-8"></script>
     
     <script>
-    const socket = io();
+        const socket = io();
 
-    // delay 
-    function delay(delay) {
-        var start = new Date().getTime();
-        while (new Date().getTime() < start + delay);
-    }
+        // Logging out of the app
+        function logOut() {
+            let userId = localStorage.getItem('userId');
+            socket.emit('user-log-out', userId);
+            localStorage.clear();
+        }
+    </script>
 
-    // Logging out of the app
-    function logOut() {
-        let username = localStorage.getItem('username');
-        socket.emit('user-log-out', username);
-        delay(100);
-    }
+    <script>
+        // script to save the userId in local storage, so that we can authenticate
+        if ('<%= userId %>' != 'null') {
+            localStorage.setItem('userId', '<%= userId %>');
+        }
+    </script>
+
+    <script>
+        // Check if the user has an open session at the beginning of the connexion
+        // if he / she does, the server responds with the user's ID
+        let userId = localStorage.getItem('userId');
+        let user = localStorage.getItem('username');
+
+        socket.emit('initial-user-authentication', {
+            username: user,
+            userId: userId
+        });
+    </script>
+
+    <script>
+        // standard navbar render (for the users that do not have an opened session)
+        let firstButton = document.getElementById('first-button');
+        let secondButton = document.getElementById('second-button');
+
+        // modify the text
+        firstButton.textContent = 'Inicia Sessió';
+        secondButton.textContent = 'Crea un compte';
+
+        // modify the href
+        firstButton.href = '/login';
+        secondButton.href = '/register';
+
+        // render buttons if the user has an opened session
+        socket.on('initial-navbar', (data) => {
+            // get the buttons we want to modify
+            let firstButton = document.getElementById('first-button');
+            let secondButton = document.getElementById('second-button');
+
+            // modify the text
+            firstButton.textContent = data.firstButton.title;
+            secondButton.textContent = data.secondButton.title;
+
+            // modify the href
+            firstButton.href = data.firstButton.href;
+            secondButton.href = data.secondButton.href;
+
+            // If user has an open session => logOut() is needed. We also want to modify the class and content for the first button
+            if (data.secondButton.onclick !== undefined) {
+                secondButton.setAttribute('onClick', `javascript: ${data.secondButton.onclick}`);
+                firstButton.innerHTML = '<i class="fas fa-user"></i>' + '&nbsp; &nbsp;' + data.firstButton.title;
+                firstButton.className = 'profile-button';
+            }
+        });
     </script>
