@@ -32,9 +32,11 @@
         background-color: rgb(230, 230, 230);
     }
 
-    .question-title:hover, .question-title {
-        text-decoration: none; 
-        color: black;
+    #question-title:hover, #question-title {
+        background-color: rgba(255, 255, 255, 0);
+        border: 0;
+        font-size: 32px;
+        font-weight: 500;
     }
 
     .pass-page {
@@ -82,8 +84,8 @@
             padding-left: 15px;
         }
 
-        #question-titles {
-            font-size: 27px;
+        #question-title:hover, #question-title {
+            font-size: 23px;
         }
 
         .page-button {
@@ -114,7 +116,12 @@
     <div class="question-container">
         <!-- We create multiple accesses for the multiple questions, accessible with router.get -->
         <% for (let i = 0; i < questionTitle.length; i++) { %>
-            <div class="question-label"> <a class="question-title" href="/question/<%= questionId[i] %>"> <h2 id="question-titles"> <%= questionTitle[i] %> <h2> </a> </div>
+            <form class="question-label" action="/question/<%= questionId[i] %>" method="POST">
+                <!-- we add the username value in this form so that we can then check in the question page 
+                which questions has this user already upvoted -->
+                <input type="hidden" name="username" id="username<%= i %>" value="" />
+                <button type="submit" id="question-title"> <%= questionTitle[i] %> </button>
+            </form> 
         <% } %>
         <% if (arrowsNeeded == true) { %>
             <div class="pass-page">
@@ -133,3 +140,10 @@
     </div>
 </body>
 
+<script>
+    // we add username to the question form
+    for (let i = 0; i < '<%= questionTitle.length %>'; i++) {
+        let username = document.getElementById(`username${i}`);
+        username.value = localStorage.getItem('username');
+    }
+</script>
