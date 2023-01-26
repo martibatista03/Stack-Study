@@ -1,11 +1,9 @@
 # Stack-Study
-Stack Study is a web application where students from all areas can ask questions about any of their fields, and even  give an answer to other's people questions, if they have enough knowledge to do so. Stack Study is a Progressive Web Application (PWA) that can be found through the following link [https://stack-study.herokuapp.com](https://stack-study.herokuapp.com) or scanning this QR code:
+Stack Study is a web application where students from all areas can ask questions about any of their fields, and even  give an answer to other's people questions, if they have enough knowledge to do so. Stack Study is a Progressive Web Application (PWA) that can be found through the following link [https://stack-study.onrender.com/](https://stack-study.onrender.com/) or scanning this QR code:
 
 <div align="center">
-  <img width="200" src="https://i.imgur.com/lRGKzNL.png"/>
+  <img width="200" src="https://user-images.githubusercontent.com/71564709/214890915-ba13a8ed-efad-4bdc-ab2d-4f1cadd1ff85.png"/>
 </div>
-
-It can also be found in the Google Play Store: [https://play.google.com/store/apps/details?id=com.herokuapp.stack_study.twa](https://play.google.com/store/apps/details?id=com.herokuapp.stack_study.twa).
 
 ## Technologies used
 Stack Study has been developed using the following technologies:
